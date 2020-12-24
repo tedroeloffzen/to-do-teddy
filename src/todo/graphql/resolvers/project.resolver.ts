@@ -1,18 +1,16 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { Project } from '../../entities/project.entity';
 import { ProjectService } from '../../services/project.service';
+import { AbstractCRUDResolver } from '../../../shared/resolver/abstract-base.resolver';
+import { ProjectInput } from '../inputs/project.input';
 
 @Resolver(of => Project)
-export class ProjectResolver {
-  constructor(private readonly projectService: ProjectService) {}
-
-  @Query(returns => [Project], { name: 'projects' })
-  public getProjects(): Promise<Project[]> {
-    return this.projectService.findAll();
+export class ProjectResolver extends AbstractCRUDResolver(Project, ProjectInput) {
+  constructor(private readonly projectService: ProjectService) {
+    super();
   }
 
-  @Query(returns => Project, { name: 'project' })
-  public getProject(@Args({ name: 'projectId', type: () => Int }) projectId: number): Promise<Project> {
-    return this.projectService.findById(projectId);
+  public getService(): ProjectService {
+    return this.projectService;
   }
 }

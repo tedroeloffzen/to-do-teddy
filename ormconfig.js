@@ -6,7 +6,7 @@ module.exports = {
   password: 'todo',
   database: 'todo',
   synchronize: false,
-  // logging: ['error', 'query'],
+  logging: ['error', 'query'],
   entities: ["dist/**/*.entity{.ts,.js}"],
   migrations: ["dist/migrations/*{.ts,.js}"]
 };

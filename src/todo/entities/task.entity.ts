@@ -29,7 +29,8 @@ export class Task extends BaseEntity {
   @Column('enum', { nullable: true, enumName: 'PriorityEnum', enum: PriorityEnum })
   public priority?: PriorityEnum;
 
-  @ManyToMany(type => Label, label => label.tasks)
+  @Field(returns => [Label], { nullable: 'items' })
+  @ManyToMany(type => Label, label => label.tasks, { cascade: true })
   @JoinTable({
     name: 'task_label',
     joinColumn: {

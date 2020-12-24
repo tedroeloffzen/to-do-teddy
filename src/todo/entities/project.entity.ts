@@ -12,13 +12,14 @@ export class Project extends BaseEntity {
   public name: string;
 
   @Field(type => Boolean)
-  @Column( { nullable: false, type: 'boolean' })
-  public deletable: boolean;
+  @Column( { nullable: false, type: 'boolean', default: true })
+  public deletable = true;
 
   @ManyToOne(type => Project, project => project.childProjects)
   @JoinColumn({ name: 'parentProject'})
   public parentProject?: Project;
 
+  @Field(returns => [Project], { nullable: 'items' })
   @OneToMany(type => Project,
       project => project.parentProject,
     { lazy: true })

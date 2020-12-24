@@ -1,5 +1,7 @@
-import { Repository } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { FindConditions } from 'typeorm/find-options/FindConditions';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 
 export abstract class AbstractBaseService<T> {
   public abstract getRepository(): Repository<T>;
@@ -8,8 +10,8 @@ export abstract class AbstractBaseService<T> {
     return this.getRepository().find();
   }
 
-  public async findById(id: number): Promise<T> {
-    const entity = await this.getRepository().findOne(id);
+  public async findById(id: number, options?: FindOneOptions<T>): Promise<T> {
+    const entity = await this.getRepository().findOne(id, options);
     if (!entity) {
       throw new NotFoundException(`Entity with ${id} was not found`);
     }
@@ -35,7 +37,13 @@ export abstract class AbstractCRUDService<T, D> extends AbstractBaseService<T>{
   }
 
   public async delete(id: number): Promise<boolean> {
-    return this.getRepository().delete(id)
+    const findConditions: FindConditions<T> = {};
+    findConditions['id'] = id;
+    return this.deleteByCriteria(findConditions);
+  }
+
+  protected async deleteByCriteria(criteria: FindConditions<T>): Promise<boolean> {
+    return this.getRepository().delete(criteria)
       .then(_ => {
         return true;
       })
